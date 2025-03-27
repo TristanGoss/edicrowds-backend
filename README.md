@@ -42,7 +42,7 @@ graph TD
 Edinburgh Crowds is implemented in three GitHub repositories:
 - [edicrowds-frontend](https://github.com/TristanGoss/edicrowds-frontend) (a public GPLv3 licenced repository)
 - [edicrowds-backend](https://github.com/TristanGoss/edicrowds-backend) (a public GPLv3 licenced repository)
-- [edicrowds-backend-private](https://github.com/TristanGoss/edicrowds-backend-private) (a private repository, this repository)
+- [edicrowds-backend-private](https://github.com/TristanGoss/edicrowds-backend-private) (a private repository)
 
 edicrowds-backend is almost exactly the same as edicrowds-backend-private (and the two are kept synchronised). The difference is that edicrowds-backend does not contain the nowcasting engine (which we retain as a trade secret). Instead, if cloned and run, edicrowds-backend will return a dummy nowcast.
 

@@ -1,0 +1,45 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+
+# Poetry
+**/.poetry/
+**/.venv/
+
+# Jupyter notebooks (if any) checkpoints
+.ipynb_checkpoints/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Local environment files
+*.env
+*.env.*
+
+# Local dev files
+*.log
+
+# Docker
+*.tar
+*.img
+docker-compose.override.yml
+**/tmp/
+**/cache/
+**/data/
+.dockerignore
+
+# Tegola
+tile-cache
+**/*.geojson
+
+# Test/output artifacts
+.coverage
+htmlcov/
+pytest_cache/
+.tox/
+test-results/

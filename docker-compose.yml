@@ -1,0 +1,53 @@
+version: "3.8"
+services:
+  postgis:
+    image: postgis/postgis
+    container_name: postgis
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ImWalk!ngH3re
+      POSTGRES_DB: geodb
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+
+  tegola:
+    # later versions of tegola have a rendering bug that affects our import method!
+    image: gospatial/tegola:v0.19.0
+    container_name: tegola
+    restart: always
+    depends_on:
+      - postgis
+    volumes:
+      - ./tegola_config.toml:/etc/tegola/config.toml:ro
+      - ./tile-cache:/tmp/tegola
+    expose:
+      - "8080"
+    command: ["serve", "--config", "/etc/tegola/config.toml"]
+
+  engine:
+    build: ./engine
+    container_name: engine
+    restart: always
+    depends_on:
+      - postgis
+    expose:
+    - "8080"
+
+  nginx:
+    image: nginx:stable
+    container_name: nginx
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/backend-common.conf:/etc/nginx/includes/backend-common.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - engine
+      - tegola
+
+volumes:
+  postgis_data:

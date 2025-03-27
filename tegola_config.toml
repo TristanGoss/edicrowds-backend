@@ -1,0 +1,39 @@
+[webserver]
+port = ":8080"  # Changed to 8080 to match existing setup
+
+[cache]
+type="file"
+basepath="/tmp/tegola"
+
+# Register the PostGIS provider
+[[providers]]
+name = "postgis"   # Provider name referenced in maps
+type = "postgis"   # Specify PostGIS as provider
+uri = "postgres://admin:ImWalk!ngH3re@postgis:5432/geodb?sslmode=disable"
+srid = 4326  # Default spatial reference system
+
+    # Define the OA polygons layer
+    [[providers.layers]]
+    name = "edinburgh_oas"                               # Layer name in the vector tile
+    tablename = "public.edinburgh_oas"                   # Table name in PostGIS
+    geometry_fieldname = "wkb_geometry"                  # Geometry column
+    geometry_type = "Polygon"
+    id_fieldname = "code_uint"                           # Unique ID field, must be uint
+    fields = ["centroid_lat", "centroid_lon", "code", "hect", "masterpc"]
+    srid = 4326                                          # Ensure correct SRID
+    sql = """
+        SELECT code_uint, code, hect, masterpc,
+        centroid_lat, centroid_lon, ST_AsBinary(wkb_geometry) AS wkb_geometry
+        FROM public.edinburgh_oas
+        WHERE is_residential = FALSE AND wkb_geometry && !BBOX!
+    """
+
+# Define the map that uses the PostGIS provider
+[[maps]]
+name = "edinburgh_oas"
+attribution = "Output Areas from National Census 2022"
+
+    [[maps.layers]]
+    provider_layer = "postgis.edinburgh_oas"  # Must match provider name + layer name
+    min_zoom = 10                             # Match frontend
+    max_zoom = 16                             # Match frontend

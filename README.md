@@ -1,4 +1,4 @@
-# Edinburgh Crowds Backend (Private Repo)
+# Edinburgh Crowds Backend
 
 This repository contains the backend for the Edinburgh Crowds project.
 The backend is four separate docker containers started using a single docker-compose.yml:

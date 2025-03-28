@@ -23,6 +23,7 @@ Thumbs.db
 
 # Local dev files
 *.log
+**/*.png
 
 # Docker
 *.tar

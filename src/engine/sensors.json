@@ -1,0 +1,257 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC021",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "Morrison Street",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 7.4,
+        "oa_code": "S00143245"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.208888,
+          55.945849
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC028",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "Rodney Street Tunnel",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 3.36,
+        "oa_code": "S00142125"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.196845,
+          55.96304
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC024",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "Roseburn Park",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 4.6,
+        "oa_code": "S00143336"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.242679,
+          55.944788
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC7161",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "Water of Leith",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 3.7,
+        "oa_code": "S00145226"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.263214,
+          55.90611
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC027",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "Harrison Park",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 3.0,
+        "oa_code": "S00143975"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.224129,
+          55.93429
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC206",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "Gilmerton Station Road",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 2.5,
+        "oa_code": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.133678,
+          55.894137
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC209",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "ELGT Little France South",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 14.5,
+        "oa_code": "S00144557"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.127791,
+          55.923195
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC040",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "Mayfield Road Southbound",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 2.2,
+        "oa_code": "S00144384"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.175734,
+          55.929942
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC022",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "North Meadown Walk, Main Path",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 4.8,
+        "oa_code": "S00143507"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.185066,
+          55.941603
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC045",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "Melville Drive Northbound",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 2.5,
+        "oa_code": "S00143566"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.200353,
+          55.941885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC038",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "Bruntsfield Place Northbound",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 3.3,
+        "oa_code": "S00143999"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.209282,
+          55.936386
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CEC039",
+        "type": "City of Edinburgh Council Pedestrian Flux Counter",
+        "description": "Bruntsfield Place Southbound",
+        "source": "https://edintraveldata.drakewell.com/",
+        "measurement_width_m": 3.3,
+        "oa_code": "S00143999"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.209072,
+          55.936267
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "EE001",
+        "type": "Essential Edinburgh Pedestrian Flux Counter",
+        "description": "Essential Edinburgh Princes Street",
+        "source": "https://www.essentialedinburgh.co.uk/stats/",
+        "measurement_width_m": 8.5,
+        "oa_code": "S00142873"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.192852,
+          55.952816
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "EE002",
+        "type": "Essential Edinburgh Pedestrian Flux Counter",
+        "description": "Rose Street",
+        "source": "https://www.essentialedinburgh.co.uk/stats/",
+        "measurement_width_m": 8.5,
+        "oa_code": "S00142948"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.2045,
+          55.951509
+        ]
+      }
+    }
+  ]
+}

@@ -58,10 +58,58 @@ EE_ROSE_IMG_TO_DATA_CALIB = {
     'pix_2': (820, 52),
     'data_2': (52, 100e3),
 }
-# from 3rd-7th March 2025, CEC045
-# TODO: Refine model
-EE_WEEKDAY_DIURNAL = [0, 0, 0, 0, 0, 0, 36, 0, 7, 3, 6, 6, 41, 17, 14, 11, 17, 21, 53, 10, 5, 1, 2, 2]
-# from 8th-9th March 2025, CEC045
-# TODO: Refine model
-EE_WEEKEND_DIURNAL = [1, 2, 0, 0, 1, 0, 53, 0, 6, 22, 28, 20, 16, 25, 17, 18, 18, 14, 48, 16, 6, 4, 5, 2]
+# from weekdays in March 2025, CEC045
+EE_WEEKDAY_DIURNAL = [
+    18,
+    17,
+    7,
+    4,
+    0,
+    4,
+    863,
+    76,
+    602,
+    417,
+    380,
+    362,
+    867,
+    89,
+    386,
+    305,
+    417,
+    555,
+    1179,
+    246,
+    171,
+    108,
+    79,
+    65,
+]
+# from weekends in March 2025, CEC045
+EE_WEEKEND_DIURNAL = [
+    23,
+    19,
+    7,
+    7,
+    5,
+    0,
+    460,
+    24,
+    54,
+    130,
+    186,
+    219,
+    193,
+    158,
+    125,
+    114,
+    137,
+    111,
+    523,
+    95,
+    74,
+    31,
+    46,
+    23,
+]
 EE_MAX_PAX_PER_HOUR = 50e3

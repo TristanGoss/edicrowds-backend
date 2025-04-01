@@ -1,11 +1,11 @@
 import asyncio
 import json
 import logging
+import re
 from contextlib import asynccontextmanager
 from importlib.resources import files
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
 
 from engine.config import LOGGING_LEVEL, NOWCAST_CACHE_TIMEOUT_S
 from engine.sensors import poll_all_sensors
@@ -74,16 +74,32 @@ async def lifespan_manager(_: FastAPI):
 app = FastAPI(lifespan=lifespan_manager)
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        'https://edinburghcrowds.co.uk',
-        'http://localhost:5173',  # for local development
-    ],
-    allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
-)
+def is_vercel_preview_deployment(url: str) -> bool:
+    return bool(re.fullmatch(r'https://edicrowds-frontend-[a-z0-9\-]+-tristan-goss-projects\.vercel\.app', url))
+
+
+@app.middleware('http')
+async def dynamic_cors_middleware(request: Request, call_next):
+    """Custom CORS Middleware to support vercel preview deployments.
+
+    Allows access if it's a local Vite dev server,
+    the production build, or a vercel preview URL.
+    """
+    origin = request.headers.get('origin')
+    response = await call_next(request)
+    if origin and (
+        origin
+        in {
+            'https://www.edinburghcrowds.co.uk',
+            'http://localhost:5173',
+        }
+        or is_vercel_preview_deployment(origin)
+    ):
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Allow-Methods'] = '*'
+        response.headers['Access-Control-Allow-Headers'] = '*'
+    return response
 
 
 @app.get('/nowcast')

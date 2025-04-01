@@ -1,19 +1,19 @@
 import asyncio
 import logging
-from typing import List
 from random import choice, random
+from typing import List
 
-from playwright.async_api import async_playwright, Browser
+from playwright.async_api import Browser, TimeoutError, async_playwright
 
 from engine import config
 
 log = logging.getLogger(__name__)
 
 
-async def _fetch_single_page(browser: Browser, url: str) -> str:
+async def _fetch_single_page(browser: Browser, url: str, page_load_indicator_selector: str) -> str:
     # break up requests in time slightly so the site is not strained
     await asyncio.sleep(random() * config.PLAYWRIGHT_POLL_JITTER_S)
-    log.debug(f"Opening page for: {url}")
+    log.debug(f'Opening page for: {url}')
     # randomise identity a bit
     context = await browser.new_context(
         user_agent=choice(config.PLAYWRIGHT_USER_AGENTS),
@@ -23,26 +23,31 @@ async def _fetch_single_page(browser: Browser, url: str) -> str:
     page = await context.new_page()
     try:
         await page.goto(url)
-        log.debug(f"Waiting for {url} to render...")
-        await page.wait_for_timeout(config.PLAYWRIGHT_RENDER_WAIT_S * 1000)  # Wait for render
-        html = await page.content()
-        log.debug('html extracted')
-        return html
+        log.debug(f'Waiting for {url} to render...')
+        try:
+            await page.wait_for_selector(page_load_indicator_selector, timeout=config.PLAYWRIGHT_LOAD_TIMEOUT_S * 1000)
+
+            html = await page.content()
+            log.debug('html extracted')
+            return html
+        except TimeoutError:
+            log.warning(f'Timed out when fetching {url}, returning empty string.')
+            return ''
     finally:
         await page.close()
 
 
-async def _fetch_all_pages(urls: List[str]) -> List[str]:
+async def _fetch_all_pages(urls: List[str], page_load_indicator_selector: str) -> List[str]:
     async with async_playwright() as p:
-        log.debug("Launching browser...")
+        log.debug('Launching browser...')
         browser = await p.chromium.launch(headless=True)
         try:
-            tasks = [_fetch_single_page(browser, url) for url in urls]
+            tasks = [_fetch_single_page(browser, url, page_load_indicator_selector) for url in urls]
             html_pages = await asyncio.gather(*tasks)
             return html_pages
         finally:
             await browser.close()
 
 
-def scrape_urls(urls):
-    return asyncio.run(_fetch_all_pages(urls))
+def scrape_urls(urls: List[str], page_load_indicator_selector: str):
+    return asyncio.run(_fetch_all_pages(urls, page_load_indicator_selector))

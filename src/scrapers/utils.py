@@ -31,7 +31,12 @@ async def _fetch_single_page(browser: Browser, url: str, page_load_indicator_sel
             log.debug('html extracted')
             return html
         except TimeoutError:
-            log.warning(f'Timed out when fetching {url}, returning empty string.')
+            html = await page.content()
+            log.warning(
+                f'Timed out when fetching {url}, page url was {page.url}, '
+                f'page title was {await page.title()}, content contained {html[:10000]}, '
+                'returning empty string.'
+            )
             return ''
     finally:
         await page.close()

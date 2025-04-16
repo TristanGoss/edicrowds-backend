@@ -144,21 +144,25 @@ def scrape_dashboard() -> Dict[str, List[Tuple[int]]]:
             found_all_figures = True
             break
 
-    if not found_all_figures:
-        raise RuntimeError('failed to extract necessary figures from Essential Edinburgh page')
+    if found_all_figures:
+        # generate the image space -> data space transforms
+        transform_lines_to_data = {
+            'EE001': get_pixel_to_data_transform(**config.EE_PRINCES_IMG_TO_DATA_CALIB),
+            'EE002': get_pixel_to_data_transform(**config.EE_ROSE_IMG_TO_DATA_CALIB),
+        }
 
-    # generate the image space -> data space transforms
-    transform_lines_to_data = {
-        'EE001': get_pixel_to_data_transform(**config.EE_PRINCES_IMG_TO_DATA_CALIB),
-        'EE002': get_pixel_to_data_transform(**config.EE_ROSE_IMG_TO_DATA_CALIB),
-    }
+        results = {
+            img['name']: transform_lines_to_data[img['name']](extract_lines_from_graphs(img['image_bytes']))
+            for img in image_dict
+        }
 
-    results = {
-        img['name']: transform_lines_to_data[img['name']](extract_lines_from_graphs(img['image_bytes']))
-        for img in image_dict
-    }
-
-    log.info('extracted data from all figures')
+        log.info('extracted data from all figures')
+    else:
+        log.warning('Failed to extract necessary figures from Essential Edinburgh page, using hard-coded fallbacks...')
+        results = {
+            'EE001': [(np.array([1]), np.array([config.EE_FALLBACK_PRINCES_FOOTFALL_PAX_PER_WEEK]))],
+            'EE002': [(np.array([1]), np.array([config.EE_FALLBACK_ROSE_FOOTFALL_PAX_PER_WEEK]))],
+        }
 
     return results
 

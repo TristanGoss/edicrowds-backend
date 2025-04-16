@@ -6,7 +6,12 @@ LOGGING_LEVEL = logging.DEBUG
 
 CACHE_ROOT = '/tmp/engine_cache'  # note must be mounted as docker volume so that cached scrapes persist over restarts
 
-NOWCAST_CACHE_TIMEOUT_S = 15 * 60  # Return the cached nowcast unless it's more than 15 minutes old
+NOWCAST_CACHE_TIMEOUT_S = 60 * 60  # Return the cached nowcast unless it's more than an hour old
+# Four settings here that prevent the cache from autorefreshing except during UK working hours.
+NOWCAST_CACHE_AUTO_REFRESH_FIRST_HOUR = 8
+NOWCAST_CACHE_AUTO_REFRESH_LAST_HOUR = 18
+NOWCAST_CACHE_AUTO_REFRESH_FIRST_WEEKDAY = 0
+NOWCAST_CACHE_AUTO_REFRESH_LAST_WEEKDAY = 4
 
 AVERAGE_WALKING_SPEED_MPS = 1.3  # For conversion of pex flux measurements to ped density
 
@@ -41,6 +46,8 @@ ETD_CACHE_TIMEOUT_S = 60 * 60  # The site offers real-time measurements, but we 
 ETD_MAX_PAX_PER_HOUR = 1e3
 
 EE_PAGE_LOAD_INDICATOR_SELECTOR = '.visualizer-chart-loaded'
+EE_FALLBACK_PRINCES_FOOTFALL_PAX_PER_WEEK = 310_000  # For when scraping fails
+EE_FALLBACK_ROSE_FOOTFALL_PAX_PER_WEEK = 70_000  # For when scraping fails
 EE_CACHE_TIMEOUT_S = 7 * 24 * 60 * 60  # The site only provides a weekly measurement
 EE_PIXELS_FROM_BOTTOM_COVERING_AXES = 100
 EE_PIXELS_FROM_TOP_COVERING_TITLE = 50

@@ -30,9 +30,9 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 
-def refresh_cached_nowcast() -> dict:
+async def refresh_cached_nowcast() -> dict:
     if TRADE_SECRETS_AVAILABLE:
-        nowcast = generate_nowcast(poll_all_sensors())
+        nowcast = generate_nowcast(await poll_all_sensors())
     else:
         log.warning('Nowcast requested, but trade secrets are not present, so returning mock data')
         data_path = files('engine') / 'mock_nowcast.json'
@@ -57,7 +57,16 @@ async def nowcast_cache_autorefresh():
         ):
             # Only refresh the cache during UK working hours to save hammering the data sources.
             log.info('Autorefreshing cache...')
-            refresh_cached_nowcast()
+            try:
+                await refresh_cached_nowcast()
+            except (RuntimeError, TypeError, KeyError) as e:
+                log.error(f'Cache autorefresh failed with error {e}')
+            log.info('Cache autorefresh complete.')
+        else:
+            log.debug(
+                'Cache autorefresh watchdog triggered, but did not autorefresh cache '
+                f'as the hour is {uk_time.hour} and the day of the week is {uk_time.weekday()}'
+            )
 
 
 @asynccontextmanager
@@ -110,11 +119,11 @@ async def dynamic_cors_middleware(request: Request, call_next):
 
 
 @app.get('/nowcast')
-def get_nowcast() -> dict:
+async def get_nowcast() -> dict:
     """Return the current nowcast, generating it if needed."""
     nowcast = NOWCAST_CACHE.read()
     if nowcast is None:
         # we need to generate a fresh nowcast for this user
-        nowcast = refresh_cached_nowcast()
+        nowcast = await refresh_cached_nowcast()
 
     return nowcast

@@ -42,13 +42,13 @@ def get_pixel_to_data_transform(
     return transform
 
 
-def extract_lines_from_graphs(image_bytes: bytes) -> List:
+def extract_lines_from_graph(image_bytes: bytes) -> List[Tuple]:
     """Extract the lines from Essential Edinburgh's graphs.
 
     We are assuming here that the lines are all different
     colours from each other, and also a different colour from the axes.
 
-    Returns a tuple containing the line's coordinates in pixel space.
+    Returns a list of tuples containing the lines' coordinates in pixel space.
     """
     # Load the image
     img = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
@@ -69,12 +69,14 @@ def extract_lines_from_graphs(image_bytes: bytes) -> List:
     unique_colours = np.unique(img.reshape(-1, 3), axis=0)
     log.debug(f'found {len(unique_colours)} unique 2-bit colours in the image')
 
-    #  Sort them by the number of pixels matching them
+    #  Sort them by the number of pixels matching them in decending order
     sorted_unique_colours = sorted(unique_colours, key=lambda x: np.all(img == x, axis=2).ravel().sum(), reverse=True)
 
     # The lines in the image will be the three most prevelant unique colors,
     # but not the most prevelant (that's the background)
     line_colours = sorted_unique_colours[1:4]
+
+    results = []
 
     for c in line_colours:
         log.debug(f'extracting data for line with colour {c}')
@@ -107,10 +109,12 @@ def extract_lines_from_graphs(image_bytes: bytes) -> List:
         pixel_space_results_x = np.arange(x_vals.min(), x_vals.max() + 1)
         pixel_space_results_y = np.interp(pixel_space_results_x, x_vals, y_vals)
 
-        return pixel_space_results_x, pixel_space_results_y
+        results.append((pixel_space_results_x, pixel_space_results_y))
+
+    return results
 
 
-def scrape_dashboard() -> Dict[str, List[Tuple[int]]]:
+async def scrape_dashboard() -> Dict[str, List[Tuple[int]]]:
     """Extract Footfall measurements from Essential Edinburgh.
 
     We scrape the Princes St and Rose St figures from
@@ -127,8 +131,8 @@ def scrape_dashboard() -> Dict[str, List[Tuple[int]]]:
         {'name': 'EE002', 'src_pattern': 'RoseSt-52-Week_Update', 'image_bytes': None, 'df': None},
     ]
 
-    html = scrape_urls(['https://www.essentialedinburgh.co.uk/stats/'], config.EE_PAGE_LOAD_INDICATOR_SELECTOR)[0]
-    soup = BeautifulSoup(html, 'html.parser')
+    html = await scrape_urls(['https://www.essentialedinburgh.co.uk/stats/'], config.EE_PAGE_LOAD_INDICATOR_SELECTOR)
+    soup = BeautifulSoup(html[0], 'html.parser')
 
     found_all_figures = False
     for image_source in [i.get('src') for i in soup.find_all('img')]:
@@ -152,8 +156,10 @@ def scrape_dashboard() -> Dict[str, List[Tuple[int]]]:
         }
 
         results = {
-            img['name']: transform_lines_to_data[img['name']](extract_lines_from_graphs(img['image_bytes']))
-            for img in image_dict
+            img['name']: [
+                transform_lines_to_data[img['name']](*x) for x in extract_lines_from_graph(img['image_bytes'])
+            ]
+            for img in images_to_find
         }
 
         log.info('extracted data from all figures')
@@ -239,7 +245,7 @@ def correct_for_diurnal_and_day_of_week(
     return {k: v / 7 * diurnal_model[dt.hour] for k, v in most_recent_measurements_pax_per_week.items()}
 
 
-def poll_essential_edinburgh() -> List[PedFluxCounterMeasurement]:
+async def poll_essential_edinburgh() -> List[PedFluxCounterMeasurement]:
     """Extract measurements from Essential Edinburgh.
 
     Wrapper function including caching
@@ -251,7 +257,7 @@ def poll_essential_edinburgh() -> List[PedFluxCounterMeasurement]:
 
     if weekly_measurements_pax_per_week is None:
         # scrape the website and cache the result
-        all_measurements_pax_per_week = scrape_dashboard()
+        all_measurements_pax_per_week = await scrape_dashboard()
         weekly_measurements_pax_per_week = extract_most_recent_measurements(all_measurements_pax_per_week)
         cache.write(weekly_measurements_pax_per_week)
 

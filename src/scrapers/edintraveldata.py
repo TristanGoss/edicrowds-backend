@@ -14,7 +14,7 @@ from scrapers.utils import scrape_urls
 log = logging.getLogger(__name__)
 
 
-def poll_edintraveldata(sensor_descriptions: List[Dict]) -> List[PedFluxCounterMeasurement]:
+async def poll_edintraveldata(sensor_descriptions: List[Dict]) -> List[PedFluxCounterMeasurement]:
     """Extract measurements from Edintraveldata.
 
     Wrapper function including caching for extracting measurements from Edintraveldata.
@@ -40,7 +40,7 @@ def poll_edintraveldata(sensor_descriptions: List[Dict]) -> List[PedFluxCounterM
         ]
 
         log.debug(f'going to check the following Edintraveldata URLs: {"\n".join(urls)}')
-        htmls = scrape_urls(urls, ETD_PAGE_LOAD_INDICATOR_SELECTOR)
+        htmls = await scrape_urls(urls, ETD_PAGE_LOAD_INDICATOR_SELECTOR)
 
         for sd, html in zip(sensor_descriptions, htmls):
             soup = BeautifulSoup(html, 'html.parser')

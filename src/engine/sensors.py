@@ -10,12 +10,12 @@ from scrapers.edintraveldata import poll_edintraveldata
 from scrapers.essential_edinburgh import poll_essential_edinburgh
 
 
-def poll_all_sensors() -> gpd.GeoDataFrame:
+async def poll_all_sensors() -> gpd.GeoDataFrame:
     # TODO: get sensor descriptions from PostGIS
     sensor_descriptions = gpd.read_file(Path(__file__).parent / 'sensors.json')
 
     # fetch measurements (note there is caching inside these functions)
-    measurements = poll_essential_edinburgh() + poll_edintraveldata(
+    measurements = await poll_essential_edinburgh() + await poll_edintraveldata(
         [
             sensor_dict
             for sensor_dict in sensor_descriptions.to_dict(orient='records')

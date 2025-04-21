@@ -22,27 +22,27 @@ async def _fetch_single_page(browser: Browser, url: str, page_load_indicator_sel
     )
     page = await context.new_page()
     try:
-        await page.goto(url)
+        await page.goto(url, timeout=config.PLAYWRIGHT_LOAD_TIMEOUT_S * 1000)
         log.debug(f'Waiting for {url} to render...')
-        try:
-            await page.wait_for_selector(page_load_indicator_selector, timeout=config.PLAYWRIGHT_LOAD_TIMEOUT_S * 1000)
 
-            html = await page.content()
-            log.debug('html extracted')
-            return html
-        except TimeoutError:
-            html = await page.content()
-            log.warning(
-                f'Timed out when fetching {url}, page url was {page.url}, '
-                f'page title was {await page.title()}, content contained {html[:10000]}, '
-                'returning empty string.'
-            )
-            return ''
+        await page.wait_for_selector(page_load_indicator_selector, timeout=config.PLAYWRIGHT_LOAD_TIMEOUT_S * 1000)
+
+        html = await page.content()
+        log.debug('html extracted')
+        return html
+    except TimeoutError:
+        html = await page.content()
+        log.warning(
+            f'Timed out when fetching {url}, page url was {page.url}, '
+            f'page title was {await page.title()}, content contained {html[:10000]}, '
+            'returning empty string.'
+        )
+        return ''
     finally:
         await page.close()
 
 
-async def _fetch_all_pages(urls: List[str], page_load_indicator_selector: str) -> List[str]:
+async def scrape_urls(urls: List[str], page_load_indicator_selector: str) -> List[str]:
     async with async_playwright() as p:
         log.debug('Launching browser...')
         browser = await p.chromium.launch(headless=True)
@@ -52,7 +52,3 @@ async def _fetch_all_pages(urls: List[str], page_load_indicator_selector: str) -
             return html_pages
         finally:
             await browser.close()
-
-
-def scrape_urls(urls: List[str], page_load_indicator_selector: str):
-    return asyncio.run(_fetch_all_pages(urls, page_load_indicator_selector))

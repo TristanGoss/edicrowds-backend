@@ -6,7 +6,7 @@ LOGGING_LEVEL = logging.DEBUG
 
 CACHE_ROOT = '/tmp/engine_cache'  # note must be mounted as docker volume so that cached scrapes persist over restarts
 
-NOWCAST_CACHE_TIMEOUT_S = 60 * 60  # Return the cached nowcast unless it's more than an hour old
+NOWCAST_CACHE_TIMEOUT_S = 15 * 60  # Return the cached nowcast unless it's more than 15 minutes old.
 # Four settings here that prevent the cache from autorefreshing except during UK working hours.
 NOWCAST_CACHE_AUTO_REFRESH_FIRST_HOUR = 8
 NOWCAST_CACHE_AUTO_REFRESH_LAST_HOUR = 18
@@ -43,7 +43,7 @@ PLAYWRIGHT_LOCALES = ['en-US', 'en-GB']
 
 ETD_PAGE_LOAD_INDICATOR_SELECTOR = '#gridTable'
 ETD_CACHE_TIMEOUT_S = 60 * 60  # The site offers real-time measurements, but we only poll it once an hour
-ETD_MAX_PAX_PER_HOUR = 1e3
+ETD_MAX_PAX_PER_HOUR = 10e3
 
 EE_PAGE_LOAD_INDICATOR_SELECTOR = '.visualizer-chart-loaded'
 EE_FALLBACK_PRINCES_FOOTFALL_PAX_PER_WEEK = 310_000  # For when scraping fails
@@ -119,4 +119,4 @@ EE_WEEKEND_DIURNAL = [
     46,
     23,
 ]
-EE_MAX_PAX_PER_HOUR = 50e3
+EE_MAX_PAX_PER_HOUR = 100e3

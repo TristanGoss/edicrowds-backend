@@ -39,7 +39,7 @@ async def poll_edintraveldata(sensor_descriptions: List[Dict]) -> List[PedFluxCo
             for s in sensor_descriptions
         ]
 
-        log.debug(f'going to check the following Edintraveldata URLs: {"\n".join(urls)}')
+        log.debug(f'going to check the following Edintraveldata URLs: \n{"\n".join(urls)}')
         htmls = await scrape_urls(urls, ETD_PAGE_LOAD_INDICATOR_SELECTOR)
 
         for sd, html in zip(sensor_descriptions, htmls):

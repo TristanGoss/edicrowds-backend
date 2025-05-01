@@ -77,6 +77,7 @@ edicrowds-backend is almost exactly the same as edicrowds-backend-private (and t
 In order to keep initial cloud costs down, Edinburgh Crowds does not use any artefact registries or CI/CD, although we plan to add these eventually. Instead, we require linting and unit testing via pre-commit hooks, and (for the backend) clone the repository onto the deployment target. From there, docker-compose handles the rest (apart from ssl certificate registration, which is manual). For the frontend, we let Vercel scan the edicrowds-frontend repo and pull in deployments as needed.
 
 ## Development setup
+### Linting
 We use Ruff for linting. When developing, please install the pre-commit hooks after installing the package:
 ```bash
 poetry install
@@ -95,6 +96,13 @@ poetry run ruff check --fix .
 
 A settings file is included in the repo to help you integrate with CV Code, 
 but you'll need to install the Ruff extension to use it.
+
+### Unit tests
+We use Pytest for unit testing. It can be installed using `poetry install --with test`, and then run with `pytest`.
+
+### Environment Variables
+You will need a .env file within your directory to run the code. The variables contained within this .env file can be inferred from the `SECRETS` constant within `engine.config.py`.
+If you are unsure what to provide for this file, please contact the author. Note that this file must be present for deployment as well.
 
 ## Service install
 If you are using the public repo, you need to remove "-private" from edicrowds-backend.service.

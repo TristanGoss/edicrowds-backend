@@ -2,12 +2,23 @@
 
 import logging
 
+from dotenv import dotenv_values
+
 LOGGING_LEVEL = logging.DEBUG
+
+SECRETS = dotenv_values('.env')
+for var_name in ['GMAIL_ALERT_EMAIL', 'GMAIL_ALERT_APP_PASSWORD']:
+    if var_name not in SECRETS:
+        raise RuntimeError(f'Environment variable {var_name} is missing from the .env file.')
 
 CACHE_ROOT = '/tmp/engine_cache'  # note must be mounted as docker volume so that cached scrapes persist over restarts
 
-NOWCAST_CACHE_TIMEOUT_S = 15 * 60  # Return the cached nowcast unless it's more than 15 minutes old.
-# Four settings here that prevent the cache from autorefreshing except during UK working hours.
+NOWCAST_CACHE_TIMEOUT_S = 60 * 60  # Return the cached nowcast unless it's more than 60 minutes old.
+NOWCAST_CACHE_AUTO_REFRESH_INTERVAL_S = (
+    55 * 60
+)  # refresh the cached nowcast every 55 minutes (so cache is still available even while it is being refreshed)
+# Four settings here that prevent the cache from autorefreshing except during UK working hours,
+# to reduce load on the scraped websites
 NOWCAST_CACHE_AUTO_REFRESH_FIRST_HOUR = 8
 NOWCAST_CACHE_AUTO_REFRESH_LAST_HOUR = 18
 NOWCAST_CACHE_AUTO_REFRESH_FIRST_WEEKDAY = 0

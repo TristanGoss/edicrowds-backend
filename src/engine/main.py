@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 from fastapi import FastAPI, Request
 
 from engine import config
+from engine.alerting import alert_via_email
 from engine.sensors import poll_all_sensors
 from engine.simple_cache import SimpleCache
 
@@ -43,30 +44,33 @@ async def refresh_cached_nowcast() -> dict:
     return nowcast
 
 
+async def nowcast_cache_autorefresh_iteration(now: datetime):
+    if (
+        config.NOWCAST_CACHE_AUTO_REFRESH_FIRST_HOUR <= now.hour <= config.NOWCAST_CACHE_AUTO_REFRESH_LAST_HOUR
+        and config.NOWCAST_CACHE_AUTO_REFRESH_FIRST_WEEKDAY
+        <= now.weekday()
+        <= config.NOWCAST_CACHE_AUTO_REFRESH_LAST_WEEKDAY
+    ):
+        log.info('Autorefreshing cache...')
+        try:
+            await refresh_cached_nowcast()
+        except BaseException as e:
+            log.error(f'Cache autorefresh failed with error {e}')
+            alert_via_email(f'Cache autorefresh failed with error {e}')
+        log.info('Cache autorefresh complete.')
+    else:
+        log.debug(
+            'Cache autorefresh watchdog triggered, but did not autorefresh cache '
+            f'as the hour is {now.hour} and the day of the week is {now.weekday()}'
+        )
+
+
 async def nowcast_cache_autorefresh():
     log.debug('Cache autorefresh watchdog started')
     while True:
-        await asyncio.sleep(config.NOWCAST_CACHE_TIMEOUT_S)
+        await asyncio.sleep(config.NOWCAST_CACHE_AUTO_REFRESH_INTERVAL_S)
         uk_time = datetime.now(ZoneInfo('Europe/London'))
-        if (
-            config.NOWCAST_CACHE_AUTO_REFRESH_FIRST_HOUR <= uk_time.hour <= config.NOWCAST_CACHE_AUTO_REFRESH_LAST_HOUR
-        ) and (
-            config.NOWCAST_CACHE_AUTO_REFRESH_FIRST_WEEKDAY
-            <= uk_time.weekday()
-            <= config.NOWCAST_CACHE_AUTO_REFRESH_LAST_WEEKDAY
-        ):
-            # Only refresh the cache during UK working hours to save hammering the data sources.
-            log.info('Autorefreshing cache...')
-            try:
-                await refresh_cached_nowcast()
-            except (RuntimeError, TypeError, KeyError) as e:
-                log.error(f'Cache autorefresh failed with error {e}')
-            log.info('Cache autorefresh complete.')
-        else:
-            log.debug(
-                'Cache autorefresh watchdog triggered, but did not autorefresh cache '
-                f'as the hour is {uk_time.hour} and the day of the week is {uk_time.weekday()}'
-            )
+        await nowcast_cache_autorefresh_iteration(uk_time)
 
 
 @asynccontextmanager

@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytest
 
-from engine.simple_cache import SimpleCache  # replace with actual module import
+from engine.simple_cache import SimpleCache
 
 
 def test_cache_write_and_read(tmp_path):

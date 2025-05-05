@@ -47,6 +47,7 @@ class SimpleCache:
 
     def write(self, data: Union[dict, list]) -> None:
         """Write new data to the cache."""
+        self.clear()
         with open(
             self.cache_root / f'{self.file_prefix}{self.to_os_safe_iso_timestamp(datetime.now())}.json', 'w'
         ) as fh:
